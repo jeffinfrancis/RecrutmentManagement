@@ -18,8 +18,10 @@ namespace RecruitmentManagement
 
         protected void Add_Click(object sender, EventArgs e)
         {
-            SqlConnection con = new SqlConnection("Data Source=SUYPC194;Initial Catalog=RecuritmentDb;User ID=sa;Password=Suyati123");
-            SqlCommand cmd = new SqlCommand("CandidateInsert", con);
+          using(SqlConnection con = new SqlConnection("Data Source=SUYPC194;Initial Catalog=RecuritmentDb;User ID=sa;Password=Suyati123"))
+          {
+            using(SqlCommand cmd = new SqlCommand("CandidateInsert", con))
+            {
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("Name", Name.Text);
             cmd.Parameters.AddWithValue("PAN", PAN.Text);
@@ -28,9 +30,17 @@ namespace RecruitmentManagement
             cmd.Parameters.AddWithValue("Status", Status.Text);
             cmd.Parameters.AddWithValue("AddedBy", AddedBy.Text);
             con.Open();
-            int i = cmd.ExecuteNonQuery();
-            con.Close();
+            int result =(int) cmd.ExecuteNonQuery();
+            if(result.count()>0)
+            {
             Response.Redirect("Welcome.aspx");
+            }
+            else
+            {
+            lbl_msg.Text=ConfigurationManager.AppSettings["User not registered"];
+            }
+           }
+          }
         }
     }
 }
